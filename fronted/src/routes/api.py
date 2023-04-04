@@ -52,7 +52,10 @@ def get_title(tittle_id:int):
         next_nodes.append(NextNode(name=next_title.name,id=next_title.__node__.identity,tp=TP.TITLE.value))
 
     for next_node in title.next_node:
-        next_nodes.append(NextNode(name=next_node.__node__["方剂"],id=next_node.__node__.identity,tp=TP.NODE.value))
+        try:
+            next_nodes.append(NextNode(name=next_node.__primarykey__,id=next_node.__node__.identity,tp=TP.NODE.value))
+        except:
+            next_nodes.append(NextNode(name=next_node.__node__["方解"],id=next_node.__node__.identity,tp=TP.NODE.value))
 
     data = {k: v for k, v in title.__node__.items() if v}
     data.pop("name")

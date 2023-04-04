@@ -1,0 +1,78 @@
+body {
+    font-family: "Microsoft YaHei", Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+h1 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#toggle-theme {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+#graph {
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#sidebar {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    height: 400px;
+    overflow-y: scroll;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.key {
+    font-weight: bold;
+}
+
+.btn-book,
+.btn-title,
+.btn-node {
+    color: #222;
+}
+
+.btn-book {
+    background-color: rgb(241, 102, 103);
+    border: none;
+}
+
+.btn-title {
+    background-color: rgb(141, 204, 147);
+    border: none;
+}
+
+.btn-node {
+    background-color: rgb(87, 199, 227);
+    border: none;
+}
+
+body.night-mode {
+    background-color: #333;
+    color: #eee;
+}
+
+body.night-mode h1 {
+    color: #eee;
+}
+
+body.night-mode #graph,
+body.night-mode #sidebar {
+    background-color: #444;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.night-mode .btn-book,
+body.night-mode .btn-title,
+body.night-mode .btn-node {
+    color: #111;
+    border: 1px solid #eee;
+}
