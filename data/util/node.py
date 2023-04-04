@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 # util\node.py
 
+import re
 from .enums import Node
+
 
 # 用方=1546, 用法=1904, 方解=1911, 主治=398, 治则=439, 属经=431, 注意=1
 def node(value:str,previous:dict,node_id:int):
+    value = re.sub(r"([\u4e00-\u9fa5]+)\s+", r"\1", value)
+
     try:
         nodes = previous["data"]
     except KeyError:
@@ -20,8 +24,11 @@ def node(value:str,previous:dict,node_id:int):
     value = value.split("]")
     node_txt = str(value[-1])
 
+    node_txt = re.sub("^ +", "", node_txt)
+    node_txt = re.sub("o$", "。", node_txt)
+
     if node_id == 0:
-        node.用方 = node_txt
+        node.用方 = re.sub("^.?方(:|：)","",node_txt)
     elif str(value[0]).find("用法") != -1:
         node.用法 = node_txt
     elif str(value[0]).find("方解") != -1:

@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 # main.py
 
-from util.io import get_docx,set_json
+import io
+import sys
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
+
+from util.io import get_docx, set_json
 from util.split import split
 from util.content import get_content
 
@@ -12,4 +17,4 @@ contents = get_content(document=document)
 
 data = split(contents=contents)
 
-set_json(path="res\苗药方剂学_pre2.json",data=data)
+set_json(path="res\苗药方剂学_pre3.json", data=data)

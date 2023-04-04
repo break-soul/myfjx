@@ -2,15 +2,16 @@
 # util\enums.py
 
 from enum import Enum
-from pydantic import BaseModel,Field
+from pydantic import BaseModel
 
 class Status(Enum):
     TITLE1=1
     TITLE2=2
     TITLE3=3
-    TEXT=4
-    NONE=5
-    FANG=6
+    TITLE4=4
+    TEXT=11
+    NONE=12
+    FANG=13
 
 # "源文件无此项内容"
 
