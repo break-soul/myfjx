@@ -3,6 +3,17 @@ $(document).ready(function () {
         return $.getJSON(url);
     }
 
+    function sortNodes(a, b) {
+        let aNumber = parseInt(a.name.match(/^\d+/));
+        let bNumber = parseInt(b.name.match(/^\d+/));
+
+        if (!isNaN(aNumber) && !isNaN(bNumber)) {
+            return aNumber - bNumber;
+        } else {
+            return a.name.localeCompare(b.name);
+        }
+    }
+
     function buildNode(node) {
         let $li = $("<li>");
         let btnClass = node.tp === 0 ? "btn-book" : (node.tp === 1 ? "btn-title" : "btn-node");
@@ -29,11 +40,9 @@ $(document).ready(function () {
 
                 let nextNode = JSON.parse($this.attr("data-next"));
                 let $ul = $("<ul>").addClass("list-unstyled ml-4");
-                
+
                 // 对 nextNode 数组进行排序
-                nextNode.sort(function (a, b) {
-                    return a.name.localeCompare(b.name);
-                });
+                nextNode.sort(sortNodes);
 
                 nextNode.forEach(function (item) {
                     let apiUrl = item.tp === 1 ? `/api/get_title/${item.id}` : `/api/get_node/${item.id}`;
@@ -57,8 +66,14 @@ $(document).ready(function () {
         return $li;
     }
 
+
+
+
     fetchData("/api/get_book").done(function (data) {
         if (data.status === 0) {
+            // 对直接链接到 book 的节点进行排序
+            data.next_node.sort(sortNodes);
+
             let $rootNode = buildNode(data);
             $("#graph").append($rootNode);
         } else {
