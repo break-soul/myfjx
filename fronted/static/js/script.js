@@ -22,9 +22,8 @@ $(document).ready(function () {
             .text(node.name)
             .attr("data-id", node.id)
             .attr("data-tp", node.tp)
-            .attr("data-next", JSON.stringify(node.next_node))
-            .attr("data-data", JSON.stringify(node.data));
-
+            .attr("data-data", JSON.stringify(node.data))
+            .attr("data-next", JSON.stringify(node.next_node));
         $button.on("click", function () {
             let $this = $(this);
             if ($this.hasClass("expanded")) {
@@ -39,16 +38,17 @@ $(document).ready(function () {
                 $("#data-display").html(dataHtml);
 
                 let nextNode = JSON.parse($this.attr("data-next"));
-                let $ul = $("<ul>").addClass("list-unstyled ml-4");
 
                 // 对 nextNode 数组进行排序
                 nextNode.sort(sortNodes);
 
+                // 构建下一层节点并添加到 DOM
+                let $ul = $("<ul>").addClass("list-unstyled ml-4");
                 nextNode.forEach(function (item) {
                     let apiUrl = item.tp === 1 ? `/api/get_title/${item.id}` : `/api/get_node/${item.id}`;
-                    fetchData(apiUrl).done(function (nodeData) {
-                        if (nodeData.status === 0) {
-                            let $node = buildNode(nodeData);
+                    fetchData(apiUrl).done(function (data) {
+                        if (data.status === 0) {
+                            let $node = buildNode(data);
                             $ul.append($node);
                         } else {
                             console.error("API 请求失败");
@@ -66,9 +66,6 @@ $(document).ready(function () {
         return $li;
     }
 
-
-
-
     fetchData("/api/get_book").done(function (data) {
         if (data.status === 0) {
             // 对直接链接到 book 的节点进行排序
@@ -83,5 +80,44 @@ $(document).ready(function () {
 
     $("#toggle-theme").on("click", function () {
         $("body").toggleClass("night-mode");
+        if ($("body").hasClass("dark-mode")) {
+            $("#data-display").css({
+                "background-color": "#343a40",
+                color: "#f8f9fa",
+            });
+        } else {
+            $("#data-display").css({
+                "background-color": "#f8f9fa",
+                color: "#343a40",
+            });
+        }
     });
 });
+
+(function () {
+    let dataDisplay = document.getElementById("data-display");
+    let isMouseDown = false;
+    let startX, startY, initialX, initialY;
+
+    dataDisplay.addEventListener("mousedown", function (event) {
+        event.preventDefault();
+        isMouseDown = true;
+        startX = event.clientX;
+        startY = event.clientY;
+        initialX = dataDisplay.getBoundingClientRect().left;
+        initialY = dataDisplay.getBoundingClientRect().top;
+    });
+
+    document.addEventListener("mousemove", function (event) {
+        if (!isMouseDown) return;
+        event.preventDefault();
+        let dx = event.clientX - startX;
+        let dy = event.clientY - startY;
+        dataDisplay.style.left = initialX + dx + "px";
+        dataDisplay.style.top = initialY + dy + "px";
+    });
+
+    document.addEventListener("mouseup", function () {
+        isMouseDown = false;
+    });
+})();

@@ -1,78 +1,97 @@
 body {
-    font-family: "Microsoft YaHei", Arial, sans-serif;
-    background-color: #f5f5f5;
+  font-family: "Microsoft YaHei", Arial, sans-serif;
+  background-color: #f5f5f5;
 }
 
 h1 {
-    font-weight: bold;
-    margin-bottom: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 #toggle-theme {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-}
+    position: fixed; /* 设置为固定定位 */
+    bottom: 10%; /* 距离底部 10%，即在底部 90% 的位置 */
+    right: 20px; /* 距离右侧 20px */
+    z-index: 999; /* 确保按钮始终显示在最上层 */
+  }
 
 #graph {
-    padding: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 #sidebar {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    height: 400px;
-    overflow-y: scroll;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  height: 400px;
+  overflow-y: scroll;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .key {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .btn-book,
 .btn-title,
 .btn-node {
-    color: #222;
+  color: #222;
 }
 
 .btn-book {
-    background-color: rgb(241, 102, 103);
-    border: none;
+  background-color: rgb(241, 102, 103);
+  border: none;
 }
 
 .btn-title {
-    background-color: rgb(141, 204, 147);
-    border: none;
+  background-color: rgb(141, 204, 147);
+  border: none;
 }
 
 .btn-node {
-    background-color: rgb(87, 199, 227);
-    border: none;
+  background-color: rgb(87, 199, 227);
+  border: none;
 }
 
 body.night-mode {
-    background-color: #333;
-    color: #eee;
+  background-color: #333;
+  color: #eee;
 }
 
 body.night-mode h1 {
-    color: #eee;
+  color: #eee;
 }
 
 body.night-mode #graph,
 body.night-mode #sidebar {
-    background-color: #444;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  background-color: #444;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 body.night-mode .btn-book,
 body.night-mode .btn-title,
 body.night-mode .btn-node {
-    color: #111;
-    border: 1px solid #eee;
+  color: #111;
+  border: 1px solid #eee;
+}
+
+#data-display {
+  position: fixed; /* 设置为固定定位 */
+  top: 20px; /* 距离顶部 20px */
+  right: 20px; /* 距离右侧 20px */
+  width: 300px; /* 设置宽度为 300px */
+  max-height: 80vh; /* 设置最大高度为 80% 的视口高度 */
+  overflow-y: auto; /* 如果内容过长，则显示滚动条 */
+  background-color: #f8f9fa;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+}
+
+body.dark-mode #data-display {
+  background-color: #343a40;
+  color: #f8f9fa;
 }
