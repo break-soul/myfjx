@@ -79,17 +79,16 @@ $(document).ready(function () {
     });
 
     $("#toggle-theme").on("click", function () {
-        $("body").toggleClass("night-mode");
+        $("body").toggleClass("dark-mode");
+
         if ($("body").hasClass("dark-mode")) {
-            $("#data-display").css({
-                "background-color": "#343a40",
-                color: "#f8f9fa",
-            });
+            document.documentElement.style.setProperty("--bg-color", "var(--dark-bg-color)");
+            document.documentElement.style.setProperty("--bg1-color", "var(--dark-bg-color)");
+            document.documentElement.style.setProperty("--text-color", "var(--dark-text-color)");
         } else {
-            $("#data-display").css({
-                "background-color": "#f8f9fa",
-                color: "#343a40",
-            });
+            document.documentElement.style.setProperty("--bg-color", "var(--light-bg-color)");
+            document.documentElement.style.setProperty("--bg1-color", "var(--light-bg1-color)");
+            document.documentElement.style.setProperty("--text-color", "var(--light-text-color)");
         }
     });
 });
