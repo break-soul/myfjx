@@ -76,14 +76,13 @@ h1 {
 
 #data-display {
   position: fixed; /* 设置为固定定位 */
-  top: 100px; /* 距离顶部 20px */
+  top: 20px; /* 距离顶部 20px */
   right: 20px; /* 距离右侧 20px */
   width: 300px; /* 设置宽度为 300px */
   max-height: 80vh; /* 设置最大高度为 80% 的视口高度 */
   overflow-y: auto; /* 如果内容过长，则显示滚动条 */
   background-color: var(--bg-color);
   padding: 20px;
-  color: var(--text-color);
   border: 1px solid var(--bg1-color);
   border-radius: 5px;
 }

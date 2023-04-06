@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="static/css/styles.css">
+        <title>《苗药方剂学》苗药知识图谱</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知识图谱</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="/static/js/script.js"></script>
-</head>
-
-<body>
-    <div class="container">
-        <h1 class="text-center mt-3">知识图谱</h1>
-        <button id="toggle-theme" class="btn btn-secondary float-right">切换日夜模式</button>
-        <div class="row">
-            <div class="col-md-8 mt-3">
-                <div id="graph"></div>
-            </div>
+  <body>
+    <body>
+        <!-- <h1>知识图谱</h1> -->
+        <div id="book-info">
+            <h2 id="book-title">《苗药方剂学》苗药知识图谱</h2>
+            <h3 id="book-author">（作者：2019 大数据 曹佳阳； 指导老师：莫礼平）</h3>
         </div>
+        <div id="graph"></div>
+        <button id="toggle-theme">切换主题</button>
         <div id="data-display"></div>
-    </div>
-</body>
-
+    
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="static/js/script.js"></script>
+    </body>
+    
 </html>

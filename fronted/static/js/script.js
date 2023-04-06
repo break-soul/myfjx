@@ -1,122 +1,116 @@
-$(document).ready(function () {
-    function fetchData(url) {
-        return $.getJSON(url);
-    }
+document.addEventListener("DOMContentLoaded", function () {
+    fetchData("/api/get_book", initGraph);
 
-    function sortNodes(a, b) {
-        let aNumber = parseInt(a.name.match(/^\d+/));
-        let bNumber = parseInt(b.name.match(/^\d+/));
-
-        if (!isNaN(aNumber) && !isNaN(bNumber)) {
-            return aNumber - bNumber;
-        } else {
-            return a.name.localeCompare(b.name);
-        }
-    }
-
-    function buildNode(node) {
-        let $li = $("<li>");
-        let btnClass = node.tp === 0 ? "btn-book" : (node.tp === 1 ? "btn-title" : "btn-node");
-        let $button = $("<button>")
-            .addClass(`btn btn-sm ${btnClass}`)
-            .text(node.name)
-            .attr("data-id", node.id)
-            .attr("data-tp", node.tp)
-            .attr("data-data", JSON.stringify(node.data))
-            .attr("data-next", JSON.stringify(node.next_node));
-        $button.on("click", function () {
-            let $this = $(this);
-            if ($this.hasClass("expanded")) {
-                $this.siblings("ul").remove();
-                $this.removeClass("expanded");
-            } else {
-                let data = JSON.parse($this.attr("data-data"));
-                let dataHtml = "";
-                for (let key in data) {
-                    dataHtml += `<span class="key">${key}:</span> ${data[key]}<br>`;
-                }
-                $("#data-display").html(dataHtml);
-
-                let nextNode = JSON.parse($this.attr("data-next"));
-
-                // 对 nextNode 数组进行排序
-                nextNode.sort(sortNodes);
-
-                // 构建下一层节点并添加到 DOM
-                let $ul = $("<ul>").addClass("list-unstyled ml-4");
-                nextNode.forEach(function (item) {
-                    let apiUrl = item.tp === 1 ? `/api/get_title/${item.id}` : `/api/get_node/${item.id}`;
-                    fetchData(apiUrl).done(function (data) {
-                        if (data.status === 0) {
-                            let $node = buildNode(data);
-                            $ul.append($node);
-                        } else {
-                            console.error("API 请求失败");
-                        }
-                    });
-                });
-
-                $this.parent().append($ul);
-                $this.addClass("expanded");
-            }
-        });
-
-        $li.append($button);
-
-        return $li;
-    }
-
-    fetchData("/api/get_book").done(function (data) {
-        if (data.status === 0) {
-            // 对直接链接到 book 的节点进行排序
-            data.next_node.sort(sortNodes);
-
-            let $rootNode = buildNode(data);
-            $("#graph").append($rootNode);
-        } else {
-            console.error("API 请求失败");
-        }
-    });
-
-    $("#toggle-theme").on("click", function () {
-        $("body").toggleClass("dark-mode");
-
-        if ($("body").hasClass("dark-mode")) {
-            document.documentElement.style.setProperty("--bg-color", "var(--dark-bg-color)");
-            document.documentElement.style.setProperty("--bg1-color", "var(--dark-bg-color)");
-            document.documentElement.style.setProperty("--text-color", "var(--dark-text-color)");
-        } else {
-            document.documentElement.style.setProperty("--bg-color", "var(--light-bg-color)");
-            document.documentElement.style.setProperty("--bg1-color", "var(--light-bg1-color)");
-            document.documentElement.style.setProperty("--text-color", "var(--light-text-color)");
-        }
+    document.getElementById("toggle-theme").addEventListener("click", function () {
+        toggleTheme();
     });
 });
 
-(function () {
-    let dataDisplay = document.getElementById("data-display");
-    let isMouseDown = false;
-    let startX, startY, initialX, initialY;
+function fetchData(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "json";
+    xhr.onload = function () {
+        callback(xhr.response);
+    };
+    xhr.send();
+}
 
-    dataDisplay.addEventListener("mousedown", function (event) {
-        event.preventDefault();
-        isMouseDown = true;
-        startX = event.clientX;
-        startY = event.clientY;
-        initialX = dataDisplay.getBoundingClientRect().left;
-        initialY = dataDisplay.getBoundingClientRect().top;
-    });
 
-    document.addEventListener("mousemove", function (event) {
-        if (!isMouseDown) return;
-        event.preventDefault();
-        let dx = event.clientX - startX;
-        let dy = event.clientY - startY;
-        dataDisplay.style.left = initialX + dx + "px";
-        dataDisplay.style.top = initialY + dy + "px";
-    });
+function initGraph(data) {
+    var graph = d3.select("#graph");
+    var nodes = graph.selectAll(".node")
+        .data(data.next_node)
+        .enter()
+        .append("button")
+        .attr("class", function (d) {
+            return getNodeClass(d.tp);
+        })
+        .text(function (d) {
+            return d.name;
+        })
+        .on("click", function (d) {
+            handleClickNode(this, d.tp, d.id);
+        });
+}
 
-    document.addEventListener("mouseup", function () {
-        isMouseDown = false;
+function handleClickNode(node, tp, id) {
+    var currentNode = d3.select(node);
+    if (currentNode.classed("expanded")) {
+        currentNode.classed("expanded", false);
+        currentNode.select("div").remove();
+        return;
+    }
+
+    fetchData(getApiUrl(tp, id), function (data) {
+        var nextNodesContainer = d3.select(node)
+            .classed("expanded", true)
+            .append("div")
+            .style("padding-left", "20px");
+
+        var nextNodes = nextNodesContainer.selectAll(".node")
+            .data(data.next_node)
+            .enter()
+            .append("button")
+            .attr("class", function (d) {
+                return getNodeClass(d.tp);
+            })
+            .text(function (d) {
+                return d.name;
+            })
+            .on("click", function (d) {
+                handleClickNode(this, d.tp, d.id);
+            });
+
+        displayData(data.data);
     });
-})();
+}
+
+function getNodeClass(tp) {
+    switch (tp) {
+        case 0:
+            return "btn btn-book";
+        case 1:
+            return "btn btn-title";
+        case 2:
+            return "btn btn-node";
+        default:
+            return "";
+    }
+}
+
+function getApiUrl(tp, id) {
+    switch (tp) {
+        case 1:
+            return "/api/get_title/" + id;
+        case 2:
+            return "/api/get_node/" + id;
+        default:
+            return "";
+    }
+}
+
+function displayData(data) {
+    var dataDisplay = document.getElementById("data-display");
+    dataDisplay.innerHTML = "";
+    for (var key in data) {
+        var p = document.createElement("p");
+        p.innerHTML = "<span class='key'>" + key + ":</span> " + data[key];
+        dataDisplay.appendChild(p);
+    }
+}
+
+function toggleTheme() {
+    var root = document.documentElement;
+    var isDarkMode = root.style.getPropertyValue("--text-color") === "#f8f9fa";
+
+    if (isDarkMode) {
+        root.style.setProperty("--bg-color", "#f8f9fa");
+        root.style.setProperty("--bg1-color", "#dee2e6");
+        root.style.setProperty("--text-color", "#343a40");
+    } else {
+        root.style.setProperty("--bg-color", "#343a40");
+        root.style.setProperty("--bg1-color", "#495057");
+        root.style.setProperty("--text-color", "#f8f9fa");
+    }
+}
