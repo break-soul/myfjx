@@ -1,0 +1,15 @@
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#knowledge-graph {
+    min-height: 500px;
+}
+
+.sidebar-entry {
+    margin-bottom: 1rem;
+}
+
+.sidebar-key {
+    font-weight: bold;
+}
