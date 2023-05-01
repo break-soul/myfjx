@@ -20,7 +20,7 @@ class Title(GraphObject):
     alias = Property()
     before_book = RelatedFrom(Book, "属于")
     before_title = RelatedFrom("Title", "属于")
-    next_tittle = RelatedTo("Title", "属于")
+    next_title = RelatedTo("Title", "属于")
     next_node = RelatedTo("Node", "用方")
 
 

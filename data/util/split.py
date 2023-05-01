@@ -43,12 +43,10 @@ def split(contents: Generator) -> dict[str]:
                 del txt
             except NameError:
                 pass
-            
             value = sub(r"(\u7ae0)([\u4e00-\u9fa5])", r"\1 \2", value)
 
             tittle_1 = new_tittle(data, value)
             previous = tittle_1
-            # print(value)
         elif title_2.findall(value):
             try:
                 del txt
@@ -56,7 +54,6 @@ def split(contents: Generator) -> dict[str]:
                 pass
             tittle_2 = new_tittle(tittle_1, value)
             previous = tittle_2
-            # print("\t"+value)
         elif title_3.findall(value):
             try:
                 del txt
@@ -65,7 +62,6 @@ def split(contents: Generator) -> dict[str]:
             value = sub("(―|―)", "一", value)
             tittle_3 = new_tittle(tittle_2, value)
             previous = tittle_3
-            # print("\t\t"+value)
         elif title_4.findall(value):
             try:
                 del txt
@@ -74,7 +70,6 @@ def split(contents: Generator) -> dict[str]:
             value = sub("-", ".", value)
             tittle_4 = new_tittle(tittle_3, value)
             previous = tittle_4
-            # print("\t\t\t"+value)
         elif nd.findall(value):
             txt = node(value, previous, 0)
         elif text.findall(value):

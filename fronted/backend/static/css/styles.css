@@ -8,6 +8,7 @@
 /* dark mode color */
 :root {
   --dark-bg-color: #343a40;
+  --dark-bg1-color: #636566;
   --dark-text-color: #f8f9fa;
 }
 
@@ -30,9 +31,11 @@ body {
   background-color: var(--bg-color);
 }
 
-h1 {
+#title,
+#author {
   font-weight: bold;
   margin-bottom: 20px;
+  color: var(--text-color);
 }
 
 #toggle-theme {
@@ -42,44 +45,24 @@ h1 {
   z-index: 999; /* 确保按钮始终显示在最上层 */
 }
 
-#graph {
-  padding: 20px;
-  background-color: var(--bg-color);
+.graph {
+  position: relative;
+  width: 100%;
+  height: 700px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.key {
-  font-weight: bold;
-}
-
-.btn-book,
-.btn-title,
-.btn-node {
-  color: var(--text-color);
-}
-
-.btn-book {
-  background-color: var(--book-bg-color);
-  border: none;
-}
-
-.btn-title {
-  background-color: var(--title-bg-color);
-  border: none;
-}
-
-.btn-node {
-  background-color: var(--node-bg-color);
-  border: none;
-}
-
-#data-display {
-  position: fixed; /* 设置为固定定位 */
-  top: 20px; /* 距离顶部 20px */
-  right: 20px; /* 距离右侧 20px */
-  width: 300px; /* 设置宽度为 300px */
-  max-height: 80vh; /* 设置最大高度为 80% 的视口高度 */
+.info-box {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  cursor: move; /* 设置鼠标指针样式 */
+  user-select: none; /* 禁止选择文本 */
   overflow-y: auto; /* 如果内容过长，则显示滚动条 */
   background-color: var(--bg-color);
   padding: 20px;

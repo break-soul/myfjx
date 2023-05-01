@@ -1,87 +1,129 @@
+import { Data, Node } from "./data.js";
+// import * as echarts from 'echarts';
 
-// 通过 AJAX 请求从 API 获取数
-function loadData(url) {
-    return $.get(url);
-}
+// main.js
+// 基于准备好的 DOM，初始化 ECharts 实例
+var chartDom = document.getElementById('graph');
+var myChart = echarts.init(chartDom);
+var option;
+
+var data = [{ id: 0, name: '苗药方剂', fixed: true, category: 0 }];
+var links = [];
+var loaded = [];
+var kv = {0:0};
+var kv_l = 1;
+
+// 配置 ECharts 的图谱样式
+option = {
+    title: {
+        text: '知识图谱'
+    },
+    tooltip: {},
+    series: [
+        {
+            type: 'graph',
+            layout: 'force',
+            symbolSize: 50,
+            roam: true,
+            label: {
+                normal: { show: true },
+                formatter: '{b}'
+            },
+            force: {
+                initLayout: 'circular', // 初始化节点位置
+                // 调整斥力参数来控制节点间距
+                repulsion: 400, // 增加斥力大小，使得节点间距更大
+                gravity: 0.1,
+                fixed:false
+            },
+            data: data,
+            links: links,
+            edgeSymbol: ['circle', 'arrow'],
+            edgeSymbolSize: [4, 10],
+            edgeLabel: {
+                show: true,
+                formatter: function (params) {
+                    return params.data.label; // 使用连接数据中的 label 属性作为线上的内容
+                },
+                fontSize: 12,
+                color: "#000",
+            },
+            lineStyle: {
+                // 设置线的颜色
+                color: "rgba(255, 0, 0, 1)", // 红色线
+            },
+            categories: [0, 1, 2]
+        }
+    ]
+};
 
 
-// 根据数据创建图谱节点
-function createNode(nodeData) {
-    const node = d3.select("#knowledge-graph")
-        .append("div")
-        .attr("class", "node")
-        .attr("id", `node-${nodeData.id}`)
-        .text(nodeData.name);
 
-    node.on("click", () => {
-        expandNode(nodeData);
-    });
+// 获取初始节点数据并设置初始图表选项
+myChart.setOption(option);
 
-    return node;
-}
+async function addNode(id) {
+    const node = await Data.getData(id);
 
-
-// 展开节点
-async function expandNode(nodeData) {
-    if (nodeData.tp === 0) {
-        const bookData = await loadData(`/api/get_book`);
-        console.log(bookData); // 添加此行以打印数据
-        d3.select("#knowledge-graph").html("");
-        if (Array.isArray(bookData.next_node)) {
-            bookData.next_node.forEach(childNodeData => {
-                createNode(childNodeData);
+    if (node) {
+        // 添加新的节点和连接
+        node.next_node.forEach((nextNode) => {
+            data.push({
+                id: nextNode.id,
+                name: nextNode.name,
+                category: nextNode.tp,
+                select: { disabled: false }
             });
-        }
-        bookData.next_node.forEach(childNodeData => {
-            createNode(childNodeData);
+            kv[nextNode.id] = kv_l;
+            if (nextNode.tp === 2) var label = "用方"; else var label = "属于";
+            links.push({
+                source: kv[node.id],
+                target: kv_l,
+                label: label
+                // select: { disabled: true }
+            });
+            kv_l++;
+            // 更新图谱
+            myChart.setOption(option);
         });
-    } else if (nodeData.tp === 1) {
-        const titleData = await loadData(`/api/get_title/${nodeData.id}`);
-        d3.select(`#node-${nodeData.id}`).html("");
-        titleData.next_node.forEach(childNodeData => {
-            const childNode = createNode(childNodeData);
-            childNode.style("display", "block");
-        });
-    } else if (nodeData.tp === 2) {
-        const nodeData = await loadData(`/api/get_node/${nodeData.id}`);
-        d3.select(`#node-${nodeData.id}`).html("");
-        nodeData.next_node.forEach(childNodeData => {
-            const childNode = createNode(childNodeData);
-            childNode.style("display", "block");
-        });
+
+    }
+}
+
+async function rmNode(id) {
+}
+
+
+// 点击事件处理函数
+myChart.on('click', function (params) {
+    if (loaded.includes(params.data.id)) { rmNode(params.data.id); }
+    else {
+        addNode(params.data.id);
+        loaded.push(params.data.id);
     }
 
-    displayData(nodeData.data);
-}
+});
 
+// 拖拽事件处理函数
+let infoBox = document.getElementById('info-box');
+let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
 
-// 在侧边栏显示节点的数据
-function displayData(data) {
-    let content = '';
+infoBox.addEventListener('mousedown', function(event) {
+    isDragging = true;
+    offsetX = event.clientX - infoBox.offsetLeft;
+    offsetY = event.clientY - infoBox.offsetTop;
+});
 
-    for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            content += `<strong>${key}</strong>: ${data[key]}<br>`;
-        }
+document.addEventListener('mousemove', function(event) {
+    if (isDragging) {
+        infoBox.style.left = (event.clientX - offsetX) + 'px';
+        infoBox.style.top = (event.clientY - offsetY) + 'px';
     }
+});
 
-    d3.select("#data-content").html(content);
-}
+document.addEventListener('mouseup', function() {
+    isDragging = false;
+});
 
-
-
-// 获取书籍数据并创建图谱
-async function init() {
-    const bookDataRaw = await loadData("/api/get_book");
-    const bookData = JSON.parse(bookDataRaw);
-    
-    // 创建 book 节点
-    createNode(bookData);
-
-    // 处理子节点
-    bookData.next_node.forEach(nodeData => {
-        createNode(nodeData);
-    });
-}
-
-init();
